@@ -61,7 +61,7 @@ void printMap(const struct Map* map, const int base1, const int alphaCols)
 
 	printf("%4s", " ");
 	for (c = 0; c < map->numCols; c++)
-	{	
+	{
 		if (alphaCols) printf("%c", 'A' + c);
 		else printf("%d", c % 10);
 	}
@@ -135,7 +135,6 @@ struct Route getGreenRoute()
 			{7, 19},
 			{8, 19},
 			{9, 19},{9, 20},{9, 21},{9, 22},{9, 23},{9, 24}
-			
 		},
 			42, GREEN
 	};
@@ -150,7 +149,7 @@ struct Route getYellowRoute()
 			{1, 0},
 			{2, 0},
 			{3, 0},
-			{4, 0}, {4, 1}, {4, 2}, {4, 3}, 
+			{4, 0}, {4, 1}, {4, 2}, {4, 3},
 			{5, 3},
 			{6, 3},
 			{7, 3},
@@ -210,7 +209,7 @@ void addPointToRoute(struct Route* route, const int row, const int col)
 void addPointToRouteIfNot(struct Route* route, const int row, const int col, const struct Point notThis)
 {
 	struct Point pt = { row, col };
-	if(notThis.row != row || notThis.col != col) addPtToRoute(route, pt);
+	if (notThis.row != row || notThis.col != col) addPtToRoute(route, pt);
 }
 
 double distance(const struct Point* p1, const struct Point* p2)
@@ -220,7 +219,7 @@ double distance(const struct Point* p1, const struct Point* p2)
 
 	return sqrt((double)(deltaRow * deltaRow + deltaCol * deltaCol));
 }
-
+/*
 struct Route shortestPath(const struct Map* map, const struct Point start, const struct Point dest)
 {
 	struct Route result = { {0,0}, 0, DIVERSION };
@@ -242,19 +241,19 @@ struct Route shortestPath(const struct Map* map, const struct Point start, const
 	}
 
 	return result;
-}
-
+}*/
+/*
 struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point backpath)
 {
 	struct Route result = { {0,0}, 0, DIVERSION };
 
-	if (p1.row > 0 )
+	if (p1.row > 0)
 	{
-		if(map->squares[p1.row - 1][p1.col] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col, backpath);	// square above
-		if (p1.col > 0 && map->squares[p1.row - 1][p1.col-1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col-1, backpath);	// top left
-		if (p1.col < (map->numCols-1) && map->squares[p1.row - 1][p1.col + 1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col + 1, backpath);	// top right
+		if (map->squares[p1.row - 1][p1.col] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col, backpath);	// square above
+		if (p1.col > 0 && map->squares[p1.row - 1][p1.col - 1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col - 1, backpath);	// top left
+		if (p1.col < (map->numCols - 1) && map->squares[p1.row - 1][p1.col + 1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col + 1, backpath);	// top right
 	}
-	if(p1.col > 0 && map->squares[p1.row][p1.col - 1] != 1)addPointToRouteIfNot(&result, p1.row, p1.col - 1, backpath);	// left
+	if (p1.col > 0 && map->squares[p1.row][p1.col - 1] != 1)addPointToRouteIfNot(&result, p1.row, p1.col - 1, backpath);	// left
 	if (p1.col < (map->numCols - 1) && map->squares[p1.row][p1.col + 1] != 1)addPointToRouteIfNot(&result, p1.row, p1.col + 1, backpath);	// right
 	if (p1.row < (map->numRows - 1))
 	{
@@ -264,13 +263,35 @@ struct Route getPossibleMoves(const struct Map* map, const struct Point p1, cons
 	}
 
 	return result;
+}*/
+
+struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point dest, const struct Point notThis) {
+	struct Route result = { {0}, 0, DIVERSION };
+
+	if (p1.row > 0 && (map->squares[p1.row - 1][p1.col] == 0 || (p1.row - 1 == dest.row && p1.col == dest.col))) {
+		addPointToRouteIfNot(&result, p1.row - 1, p1.col, notThis);
+	}
+
+	if (p1.row < (getNumRows(map) - 1) && (map->squares[p1.row + 1][p1.col] == 0 || (p1.row + 1 == dest.row && p1.col == dest.col))) {
+		addPointToRouteIfNot(&result, p1.row + 1, p1.col, notThis);
+	}
+
+	if (p1.col > 0 && (map->squares[p1.row][p1.col - 1] == 0 || (p1.row == dest.row && p1.col - 1 == dest.col))) {
+		addPointToRouteIfNot(&result, p1.row, p1.col - 1, notThis);
+	}
+
+	if (p1.col < (getNumCols(map) - 1) && (map->squares[p1.row][p1.col + 1] == 0 || (p1.row == dest.row && p1.col + 1 == dest.col))) {
+		addPointToRouteIfNot(&result, p1.row, p1.col + 1, notThis);
+	}
+
+	return result;
 }
 
 int eqPt(const struct Point p1, const struct Point p2)
 {
 	return p1.row == p2.row && p1.col == p2.col;
 }
-
+/*
 int getClosestPoint(const struct Route* route, const struct Point pt)
 {
 	int i, closestIdx = -1;
@@ -287,22 +308,4 @@ int getClosestPoint(const struct Route* route, const struct Point pt)
 	}
 	return closestIdx;
 }
-
-struct Map addMultipleRoutes(struct Map* baseMap, struct Route* routes, int numRoutes) {
-
-    struct Map newMap;
-		newMap.numRows = baseMap->numRows;
-		newMap.numCols = baseMap->numCols;
-		int r, c;
-		for (r = 0; r < baseMap->numRows; r++)
-		{
-			for (c = 0; c < baseMap->numCols; c++)
-			{
-				newMap.squares[r][c] = baseMap->squares[r][c];
-			}
-		}
-		for (int i = 0; i < numRoutes; i++) {
-			newMap = addRoute(&newMap, &routes[i]);
-		}
-    return newMap;
-}
+*/

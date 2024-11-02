@@ -1,17 +1,20 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>    //malloc, free
+#include <ctype.h>     //toupper
+#include "math.h"
+#include "stdbool.h"
 #include "mapping.h"
 #include "utility.h"
 #include "dataStructure.h"
-#include "math.h"
-#include "stdbool.h"
 
+//** Clears any remaining characters in the input buffer.
 void clearInputBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+//** Add multi-route to a map using the indicated symbol.
 struct Map addMultipleRoutes(struct Map* map, struct Route* routes, int numRoutes) {
     struct Map updatedMap = *map;
     for (int i = 0; i < numRoutes; i++) {
@@ -20,215 +23,213 @@ struct Map addMultipleRoutes(struct Map* map, struct Route* routes, int numRoute
     return updatedMap;
 }
 
+//** Prompts the user for shipment information and populates the cargo struct.
 int getUserInput(struct Shipment* cargo) {
-
     printf("Enter shipment weight, box size and destination (0 0 x to stop): ");
     int tempRow;
     char tempCol;
     scanf("%lf %lf %d", &cargo->weight, &cargo->boxSize, &tempRow);
     scanf(" %c", &tempCol);
-    cargo->point.row = tempRow - 1;
+
     clearInputBuffer();
-    
+
+    cargo->point.row = tempRow - 1;                    // Convert row to zero - based index
+    cargo->point.col = (int)(toupper(tempCol) - 'A');  // Convert column letter to index
+
+    // Check if the user wants to stop
     if (cargo->weight == 0 && cargo->boxSize == 0 && tolower(tempCol) == 'x') {
         return 0;
     }
 
-    convertAlphabetToNumber(cargo,&tempCol);
-
+    // Validate input; return -1 if invalid
     int invalidType = validUserInput(*cargo);
-    switch (invalidType) {
-    case 1:
-        printf("Invalid destination\n");
-        break;
-    case 2:
-        printf("Invalid size\n");
-        break;
-    case 3:
-        printf("Invalid weight(must be 1 - 2000 Kg.\n");
-        break;
-    default:
-        break;
+    if (invalidType != 0) {
+        return -1;
     }
     return 1;
 }
 
+//** Validates user input for shipment details.
 int validUserInput(struct Shipment cargo) {
     if (cargo.point.row < 0 || cargo.point.row > 25 || cargo.point.col < 0 || cargo.point.col > 25) {
+        printf("Invalid destination\n");
         return 1;
     }
     if (cargo.boxSize != 0.5 && cargo.boxSize != 1 && cargo.boxSize != 2) {
+        printf("Invalid size\n");
         return 2;
-    } 
+    }
     if (cargo.weight <= 0 || cargo.weight > 2000) {
+        printf("Invalid weight (must be 1 - 2000 Kg).\n");
         return 3;
     }
+    return 0;
 }
 
-void convertAlphabetToNumber(struct Shipment* cargo, char* col) {
-    cargo->point.col = (int)(toupper(*col) - 'A');
-}
+//**Finds the most suitable truck for a given shipment based on route and load.
+int findTruckForShipment(const struct Map map, struct Truck* trucks, const int numTrucks, const struct Shipment cargo) {
+    struct Route finalPath = { {0}, 9999999, -1 };   // Initialize with a very high path length
+    int shortestTruckIndex = -1;
 
-Node* create_node(Node* parent, struct Point pt) {
-    Node* new_node = (Node*)malloc(sizeof(Node));
-    if (!new_node) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
-    new_node->parent = parent;
-    new_node->point = pt;
-    new_node->g = 0;
-    new_node->h = 0;
-    new_node->f = 0;
-    return new_node;
-}
+    // Iterate over each truck to find the one with sufficient capacity and the shortest path
+    for (int j = 0; j < numTrucks; j++) {
+        double checkWeight = trucks[j].totalWeight + cargo.weight;
+        double checkVolume = trucks[j].totalVolume + cargo.boxSize;
 
-void add_to_open_list(Node** open_list, int* open_list_size, Node* node) {
-    if (*open_list_size < 100) {
-        open_list[*open_list_size] = node;
-        (*open_list_size)++;
-    }
-    else {
-        fprintf(stderr, "Open list overflow\n");
-    }
-}
+        // Evaluate each point in the truck's route to find the shortest diversion to the shipment
+        if (checkWeight < MAX_WEIGHT && checkVolume < MAX_VOLUME) {
+            for (int i = 0; i < trucks[j].route.numPoints; i++) {
+                struct Route tempPath = aStarPath(&map, trucks[j].route.points[i], cargo.point, trucks[j].route.routeSymbol);
 
-void remove_from_open_list(Node** open_list, int* open_list_size, int index) {
-    if (index < *open_list_size) {
-        for (int i = index; i < *open_list_size - 1; i++) {
-            open_list[i] = open_list[i + 1];
-        }
-        (*open_list_size)--;
-    }
-}
-
-int get_lowest_f_index(Node** open_list, int open_list_size) {
-    int lowest_index = 0;
-    for (int i = 1; i < open_list_size; i++) {
-        if (open_list[i]->f < open_list[lowest_index]->f) {
-            lowest_index = i;
+                // Update finalPath if this route is shorter or has a lower load percentage
+                if (tempPath.numPoints < finalPath.numPoints ||
+                    (tempPath.numPoints == finalPath.numPoints && trucks[j].loadedPercentage < trucks[shortestTruckIndex].loadedPercentage)) {
+                    finalPath = tempPath;
+                    shortestTruckIndex = j;
+                }
+            }
         }
     }
-    return lowest_index;
-}
 
-bool is_within_map(struct Map* map, struct Point pt) {
-    return (pt.row >= 0 && pt.row < map->numRows && pt.col >= 0 && pt.col < map->numCols);
-}
-
-bool is_walkable(struct Map* map, struct Point pt) {
-    return map->squares[pt.row][pt.col] == 0;
-}
-
-bool is_in_closed_list(Node** closed_list, int closed_list_size, Node* node) {
-    for (int i = 0; i < closed_list_size; i++) {
-        if (closed_list[i]->point.row == node->point.row && closed_list[i]->point.col == node->point.col) {
-            return true;
-        }
+    // Update the selected truck's diversion route and load information
+    if (shortestTruckIndex != -1) {
+        updateTruckDivert(&trucks[shortestTruckIndex], finalPath, cargo);
     }
-    return false;
+
+    return shortestTruckIndex;
 }
 
-struct Point* a_star(struct Map* map, struct Point start, struct Point dest, int* path_length) {
-    Node* start_node = create_node(NULL, start);
-    Node* dest_node = create_node(NULL, dest);
+//** Calculates the shortest route between two points using the A* algorithm.
+struct Route aStarPath(const struct Map* map, const struct Point start, const struct Point dest, int routeSymbol) {
+    struct Route route = { {0}, 0, routeSymbol };        // Initialize route with zero points and route symbol
+    struct Node* openList[MAP_ROWS * MAP_COLS];          // Open list to store nodes to be evaluated
+    bool closedList[MAP_ROWS][MAP_COLS] = { false };     // Closed list to track visited nodes
 
-    Node* open_list[1000];
-    int open_list_size = 0;
-    Node* closed_list[1000];
-    int closed_list_size = 0;
+    int openCount = 0;
 
-    add_to_open_list(open_list, &open_list_size, start_node);
+    // Initialize the starting node and add it to the open list
+    struct Node* startNode = (struct Node*)malloc(sizeof(struct Node));
+    startNode->point = start;
+    startNode->g = 0;
+    startNode->h = distance(&start, &dest);
+    startNode->f = startNode->g + startNode->h;
+    startNode->parent = NULL;
+    openList[openCount++] = startNode;
 
-    while (open_list_size > 0) {
-        int current_index = get_lowest_f_index(open_list, open_list_size);
-        Node* current_node = open_list[current_index];
+    // Main loop: Continue until the open list is empty
+    while (openCount > 0) {
 
-        remove_from_open_list(open_list, &open_list_size, current_index);
-        if (closed_list_size < 100) {
-            closed_list[closed_list_size++] = current_node;
+        // Find the node with the lowest f-cost in the open list
+        int lowestIndex = 0;
+        for (int i = 1; i < openCount; i++) {
+            if (openList[i]->f < openList[lowestIndex]->f) {
+                lowestIndex = i;
+            }
         }
-        else {
-            fprintf(stderr, "Closed list overflow\n");
-            break;
+
+        struct Node* current = openList[lowestIndex];
+
+        // Remove the node with the lowest f-cost from the open list
+        for (int i = lowestIndex; i < openCount - 1; i++) {
+            openList[i] = openList[i + 1];
         }
+        openCount--;
 
-        if (current_node->point.row == dest_node->point.row &&
-            current_node->point.col == dest_node->point.col) {
-
-            *path_length = 0;
-            Node* path_node = current_node;
-            while (path_node != NULL) {
-                (*path_length)++;
-                path_node = path_node->parent;
+        // Check if the destination is reached
+        if (eqPt(current->point, dest)) {
+            // Reconstruct the path by following parent pointers
+            struct Node* pathNode = current;
+            while (pathNode != NULL) {
+                addPointToRoute(&route, pathNode->point.row, pathNode->point.col);
+                pathNode = pathNode->parent;
             }
 
-            struct Point* path = (struct Point*)malloc(*path_length * sizeof(struct Point));
-            if (!path) {
-                fprintf(stderr, "Memory allocation failed for path\n");
-                exit(1);
-            }
-            path_node = current_node;
-            for (int i = *path_length - 1; i >= 0; i--) {
-                path[i] = path_node->point;
-                path_node = path_node->parent;
+            // Reverse the route to get the correct order from start to destination
+            for (int i = 0; i < route.numPoints / 2; i++) {
+                struct Point temp = route.points[i];
+                route.points[i] = route.points[route.numPoints - 1 - i];
+                route.points[route.numPoints - 1 - i] = temp;
             }
 
-            free(dest_node);
-            return path;
+            // Free any remaining nodes in the open list
+            for (int i = 0; i < openCount; i++) {
+                free(openList[i]);
+            }
+            free(current);  // Free the current node
+            return route;   // Return the final path
         }
 
-        struct Point directions[8] = { {0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
-        for (int i = 0; i < 8; i++) {
-            struct Point new_position = { current_node->point.row + directions[i].row, current_node->point.col + directions[i].col };
+        // Mark the current node as visited by adding it to the closed list
+        closedList[current->point.row][current->point.col] = true;
 
-            if (!is_within_map(map, new_position) || !is_walkable(map, new_position)) continue;
+        // Get neighboring points and evaluate them
+        struct Route neighbors = getPossibleMoves(map, current->point, dest, current->parent ? current->parent->point : (struct Point) { -1, -1 });
+        for (int i = 0; i < neighbors.numPoints; i++) {
+            struct Point neighborPos = neighbors.points[i];
 
-            Node* child = create_node(current_node, new_position);
+            // Skip neighbors that are already visited
+            if (closedList[neighborPos.row][neighborPos.col]) continue;
 
-            if (is_in_closed_list(closed_list, closed_list_size, child)) {
-                free(child);
-                continue;
-            }
+            // Calculate costs for the neighbor node
+            int gCost = current->g + 1;
+            double hCost = distance(&neighborPos, &dest);
+            double fCost = gCost + hCost;
 
-            child->g = current_node->g + 1;
-            child->h = (child->point.row - dest_node->point.row) * (child->point.row - dest_node->point.row) +
-                (child->point.col - dest_node->point.col) * (child->point.col - dest_node->point.col);
-            child->f = child->g + child->h;
+            bool skip = false;
 
-            bool add_child = true;
-            for (int j = 0; j < open_list_size; j++) {
-                if (open_list[j]->point.row == child->point.row && open_list[j]->point.col == child->point.col &&
-                    child->g > open_list[j]->g) {
-                    add_child = false;
+            // Check if the neighbor is already in the open list with a lower f-cost
+            for (int j = 0; j < openCount; j++) {
+                if (openList[j]->point.row == neighborPos.row &&
+                    openList[j]->point.col == neighborPos.col &&
+                    openList[j]->f <= fCost) {
+                    skip = true;
                     break;
                 }
             }
 
-            if (add_child) add_to_open_list(open_list, &open_list_size, child);
-            else free(child);
+            // If the neighbor is not in the open list with a better path, add it
+            if (!skip && openCount < MAP_ROWS * MAP_COLS) {
+                struct Node* neighborNode = (struct Node*)malloc(sizeof(struct Node));
+                neighborNode->point = neighborPos;
+                neighborNode->g = gCost;
+                neighborNode->h = hCost;
+                neighborNode->f = fCost;
+                neighborNode->parent = current;
+                openList[openCount++] = neighborNode;
+            }
         }
     }
 
-    free(dest_node);
-    return NULL;
+    // Free any remaining nodes in the open list if no path was found
+    for (int i = 0; i < openCount; i++) {
+        free(openList[i]);
+    }
+
+    // Indicate failure to find a path by setting numPoints to -1
+    route.numPoints = -1;
+    return route;
 }
 
+//** Updates the truckâ€™s diversion route and load status after adding a shipment.
+void updateTruckDivert(struct Truck* truck, const struct Route final, const struct Shipment cargo) {
+    truck->shortestDivert = final;
+    truck->totalVolume += cargo.boxSize;
+    truck->totalWeight += cargo.weight;
+    truck->loadedPercentage = fmax((truck->totalVolume / MAX_VOLUME) * 100, (truck->totalWeight / MAX_WEIGHT) * 100);
+}
 
-int findTruckForShipment(struct Map map, struct Truck* trucks, int numTrucks, struct Shipment cargo) {
-    struct Point strat = { 8, 11 };
-    int path_length;
-    struct Point* path = a_star(&map, strat, cargo.point, &path_length);
-    if (path) {
-        printf("Path found:\n");
-        for (int i = 0; i < path_length; i++) {
-            printf("(%d, %d) ", path[i].row, path[i].col);
-        }
-        free(path);
+//** Displays the diversion route for the truck, including any alternative routes.
+void displayDivert(struct Route finalPath) {
+    if (finalPath.numPoints == 2) {
+        printf("no diversion");
     }
     else {
-        printf("No path found.\n");
+        printf("divert:");
+        for (int i = 0; i < finalPath.numPoints; i++) {
+            if (i > 0) printf(",");
+            printf(" %d%c", finalPath.points[i].row + 1, toupper('A' + finalPath.points[i].col));
+        }
     }
-
-    return 1;  // ¦¨¥\
+    printf("\n");
 }
+
