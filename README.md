@@ -1,4 +1,4 @@
-# **Delivery Truck Routing System**
+# **A-Star-Pathfinding-System**
 
 ## **Project Overview**
 This project simulates a delivery truck routing system for a local delivery company operating in a 25x25 grid city. The company uses three trucks, each assigned to specific routes (blue, yellow, and green) to efficiently deliver packages to designated buildings.
@@ -70,7 +70,7 @@ fall24-sft221-nff-d/
 1. **Clone the Repository**:
    - Clone the repository to your local machine:
    ```
-   git clone https://github.com/ghuang33_seneca/fall24-sft221-nff-d.git
+   git clone https://github.com/guan-wei-huang31/A-Star-Pathfinding-System.git
    ```
 2. **Compile the Code**:
    - Navigate to the SourceCode directory and compile the code:
