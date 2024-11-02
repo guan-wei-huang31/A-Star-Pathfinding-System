@@ -1,9 +1,9 @@
 # **A-Star-Pathfinding-System**
 
 ## **Project Overview**
-This project simulates a delivery truck routing system for a local delivery company operating in a 25x25 grid city. The company uses three trucks, each assigned to specific routes (blue, yellow, and green) to efficiently deliver packages to designated buildings.
+This project simulates a delivery truck routing system for a local delivery company operating in a 25x25 grid city. The company uses three trucks, each assigned to specific routes (blue, yellow, and green) to efficiently deliver packages to designated buildings.  
+The system provides truck routing, route selection, cargo tracking, and dynamic pathfinding using the A* algorithm for shortest path calculations.
 
-he system provides truck routing, route selection, cargo tracking, and dynamic pathfinding using the A* algorithm for shortest path calculations.
 ---
 
 ## **📦Features**
