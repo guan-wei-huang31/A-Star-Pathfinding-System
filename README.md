@@ -3,20 +3,14 @@
 ## **Project Overview**
 This project simulates a delivery truck routing system for a local delivery company operating in a 25x25 grid city. The company uses three trucks, each assigned to specific routes (blue, yellow, and green) to efficiently deliver packages to designated buildings.
 
+he system provides truck routing, route selection, cargo tracking, and dynamic pathfinding using the A* algorithm for shortest path calculations.
 ---
 
 ## **📦Features**
-- **Route Management:**
-  1. Trucks follow pre-defined routes, but can divert slightly to deliver packages.
-  2. A* algorithm is used to calculate the shortest path when a truck needs to deviate from its route.
-- **Truck Capacity:**
-  1. Each truck can carry up to 2000 kg or 20 cubic meters of packages.
-  2. Packages come in sizes of 0.5, 1, or 2 cubic meters.
-- **Delivery Assignment:**
-  1. Packages are assigned based on truck availability and proximity to the destination.
-  2. If trucks are at the same distance, the truck with more available space is chosen.
-- **Handling Unreachable Destinations:**
-  1. If a destination is unreachable (e.g., blocked by buildings), the program marks it as undeliverable by that truck.
+- **Dynamic Route Optimization:** Uses the A* algorithm to dynamically calculate the shortest diversion paths based on cargo destination, ensuring efficient delivery.
+- **Multi-Route Management:** Supports multiple pre-defined routes (Blue, Green, Yellow) for different trucks, enabling adaptable transport logistics.
+- **Cargo and Truck Management:** Monitors truck capacity in real-time, including weight and volume checks, to ensure optimal load distribution.
+- **User-Friendly Interaction:** Interactive user input allows operators to specify shipment details (weight, volume, and destination) and receive immediate routing suggestions.
 
 ---
 
@@ -37,10 +31,18 @@ fall24-sft221-nff-d/
 ```
  
 ## **🚀Key Algorithm Steps**
-- **Calculate Euclidean Distance**: At each point on a truck’s route, the Euclidean distance to the destination is calculated.
-- **Pathfinding**: The A* algorithm determines the optimal diversion path, avoiding buildings.
-- **Load Balancing**: Packages are added to trucks based on remaining weight/volume capacity.
-- **Fallback Handling**: If no truck can deliver the package, it is stored for next-day delivery.
+- **Map Population and Visualization**: 
+  1. A pre-defined map grid representing possible routes and obstacles is initialized and populated with delivery routes.
+  2. Visual representation of routes on a 2D grid, making it easy to verify and understand routes.
+- **Cargo Input and Validation**: 
+  1. Accepts user input for cargo details (weight, volume, destination).
+  2. Validates cargo attributes against maximum allowable weight and volume, as well as destination constraints.
+- **Route Calculation and Optimization (A Algorithm)**: 
+  1. Uses the A* pathfinding algorithm to calculate the shortest route or diversion for each truck, bypassing obstacles.
+  2. Calculates Euclidean distance to provide efficient pathfinding based on real-world scenarios.
+- **Truck Assignment and Load Management**: 
+  1. Dynamically assigns the most suitable truck based on the load and the shortest path to the destination.
+  2. Updates truck's load information, including total weight, volume, and utilized capacity, to prevent overloads.
 
 ---
 
@@ -81,9 +83,18 @@ fall24-sft221-nff-d/
 5. **Output**:
    - The program will display the assigned truck, delivery route, and any necessary diversion paths.
 
-## **Technologies Used**
-- **C Language**: Core programming language for implementing the delivery routing logic, data structures, and algorithms.
-- **A Pathfinding Algorithm**: Used for calculating the shortest path, avoiding obstacles like buildings..
+---
+
+## **Key Technical Concepts**
+- **A star Algorithm**: Calculates the shortest path by minimizing cost f = g + h, where g is the movement cost from the start point and h is the heuristic estimate to the destination.
+- **Euclidean Distance Calculation**: Used to optimize pathfinding accuracy in real-world applications.
+- **Struct-based Management**: Organizes complex data structures for trucks, shipments, and map routes, making it easier to handle multiple entities and routes.
+
+---
+## **Future Enhancements**
+- **Enhanced Route Mapping:** Allow dynamic addition of new routes based on changing map conditions.
+- **Advanced Load Balancing:** Implement predictive load balancing across trucks based on expected delivery demand.
+- **Graphical User Interface:** Provide a GUI for interactive route visualization and management.
 
 ---
 
@@ -93,3 +104,4 @@ Email: ghuang24@gmail.com
 
 
 ### **Conclusion**
+This project showcases an efficient routing and delivery system leveraging the A* pathfinding algorithm, dynamic route management, and capacity tracking to meet logistical demands in a structured urban grid environment.
