@@ -86,19 +86,20 @@ fall24-sft221-nff-d/
     ```
 	
 - **Input/output sample**:
-  1. **Input**: Weight 20, Box size 5, destination 28x  
-     - **Output**: Invalid destination (destination is out side of the 25x25 map)  
-  2. **Input**: Weight 20, Box size 4, destination 12L  
-     - **Output**: Invalid size (Box size must be 0.5, 1, 2 cubic meters)  
-  3. **Input**: Weight 2100, Box size 2, destination 12L  
-	 - **Output**: Invalid weight (must be 1 - 2000 Kg).  
-  4. **Input**: Weight 20, Box size 2, destination 12L  
-     - **Output**: Ship on BLUE LINE, no diversion (just next to the Blue route at 12K)  
-  5. **Input**: Weight 1900, Box size 1, destination 8Y
-     - **Output**: Ship on GREEN LINE, divert: 7T, 7U, 7V, 7W, 7X, 7Y, 8Y   (Shortest path on Green route start at 7T point)  
-  6. **Input**: Weight 1900, Box size 1, destination 8Y
+  - **Input**: 20, 5, 28x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight, Box size, destination)
+     - **Output**: Invalid destination                       (destination is out side of the 25x25 map)  
+  
+  - **Input**: 20, 4, 12L                                    
+     - **Output**: Invalid size                              (Box size must be 0.5, 1, 2 cubic meters)  
+  - **Input**: 2100, 2, 12L                                  
+	 - **Output**: Invalid weight                            (must be 1 - 2000 Kg).  
+  - **Input**: 20, 2, 12L                                    
+     - **Output**: Ship on BLUE LINE, no diversion           (just next to the Blue route at 12K)  
+  - **Input**: 1900, 1, 8Y
+     - **Output**: Ship on GREEN LINE, divert: 7T, 7U, ...   (Shortest path on Green route start at 7T point)  
+  - **Input**: 1900, 1, 8Y
      - **Output**: Ship on Blue LINE, divert: 18V, 17V, ...  (Green truck is fully loaded with 1900 kg, so the second closest route is chosen)
-  7. **Input**: 0 0 x
+  - **Input**: 0 0 x                                         (End code)
      - **Output**: End the program.
 	```
     =================
