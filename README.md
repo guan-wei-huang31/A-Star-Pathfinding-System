@@ -86,20 +86,19 @@ fall24-sft221-nff-d/
     ```
 	
 - **Input/output sample**:
-  - **Input**: 20, 5, 28x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Weight, Box size, destination)
-     - **Output**: Invalid destination                       (destination is out side of the 25x25 map)  
-  
-  - **Input**: 20, 4, 12L                                    
-     - **Output**: Invalid size                              (Box size must be 0.5, 1, 2 cubic meters)  
+  - **Input**: 20, 5, 28<pre>                                     (Weight, Box size, destination)</pre>
+     - **Output**: Invalid destination<pre>                       (destination is out side of the 25x25 map)</pre>    
+  - **Input**: 20, 4, 12L                                   
+     - **Output**: Invalid size<pre>                              (Box size must be 0.5, 1, 2 cubic meters)</pre>  
   - **Input**: 2100, 2, 12L                                  
-	 - **Output**: Invalid weight                            (must be 1 - 2000 Kg).  
+	 - **Output**: Invalid weight<pre>                            (must be 1 - 2000 Kg).</pre>  
   - **Input**: 20, 2, 12L                                    
-     - **Output**: Ship on BLUE LINE, no diversion           (just next to the Blue route at 12K)  
+     - **Output**: Ship on BLUE LINE, no diversion<pre>           (just next to the Blue route at 12K)</pre>  
   - **Input**: 1900, 1, 8Y
-     - **Output**: Ship on GREEN LINE, divert: 7T, 7U, ...   (Shortest path on Green route start at 7T point)  
+     - **Output**: Ship on GREEN LINE, divert: 7T, 7U, ...<pre>   (Shortest path on Green route start at 7T point)</pre>  
   - **Input**: 1900, 1, 8Y
-     - **Output**: Ship on Blue LINE, divert: 18V, 17V, ...  (Green truck is fully loaded with 1900 kg, so the second closest route is chosen)
-  - **Input**: 0 0 x                                         (End code)
+     - **Output**: Ship on Blue LINE, divert: 18V, 17V, ...<pre>  (Green truck is fully loaded with 1900 kg, so the second closest route is chosen)</pre>
+  - **Input**: 0 0 x<pre>                                         (End code)</pre>
      - **Output**: End the program.
 	```
     =================
