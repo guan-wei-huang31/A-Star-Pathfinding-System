@@ -47,7 +47,60 @@ fall24-sft221-nff-d/
 ---
 
 ## **🖨️Sample Output**
+- 25x25 grid map (All trucks start at (1,A)):
+  1. **X**: Building (Prohibited area, trucks cannot pass)
+  2. **B**: Blue truck route
+  3. **G**: Green truck route
+  4. **Y**: Yellow truck route
+  5. **+**: Overlap of all routes (Blue, Green, and Yellow)
+  6. **.**: Overlap of Blue and Green routes
+  7. **Space**: Road
     ```
+        ABCDEFGHIJKLMNOPQRSTUVWXY
+        -------------------------
+      1|+   XX     GGGGGGGGG
+      2|+XX XX XX  G    XX GXX
+      3|+XX XX XX XGXX  XX GXX
+      4|+          G       G
+      5|++++......GG       G
+      6|   Y     B         G
+      7|XX YXX XXB     X XXG
+      8|XX YXX X BXXX  X  XG  XXX
+      9|   Y   X BXXX  X  XG  XXX
+     10| YYY     B         GGGGGG
+     11| Y       BB
+     12|XYXXX     BXXXXXX XXX XXX
+     13|XY    XXXXBXXXXXX XXX XXX
+     14|XYXXX XXXXBXXXXXX XXX XXX
+     15|XYXXX     BXXXXXX XXX XXX
+     16|XY    XXX BXXXXXX XXX XXX
+     17| Y    XXX B
+     18| Y    XXX BBBBBBBBBBBBBBB
+     19| Y    XXX    XXXXXXXXXXXX
+     20| YYYYYYYYYYYYYYYYYYYYYYYY
+     21|
+     22| XXXXXXX  XX XX XXXX
+     23| XXXXXXX  XX XX XXXX XXXX
+     24| XXXXXXX  XX XX      XXXX
+     25| XXXXXXX  XX XX
+    ```
+	
+- **Input/output sample**:
+  1. **Input**: Weight 20, Box size 5, destination 28x  
+     - **Output**: Invalid destination (destination is out side of the 25x25 map)  
+  2. **Input**: Weight 20, Box size 4, destination 12L  
+     - **Output**: Invalid size (Box size must be 0.5, 1, 2 cubic meters)  
+  3. **Input**: Weight 2100, Box size 2, destination 12L  
+	 - **Output**: Invalid weight (must be 1 - 2000 Kg).  
+  4. **Input**: Weight 20, Box size 2, destination 12L  
+     - **Output**: Ship on BLUE LINE, no diversion (just next to the Blue route at 12K)  
+  5. **Input**: Weight 1900, Box size 1, destination 8Y
+     - **Output**: Ship on GREEN LINE, divert: 7T, 7U, 7V, 7W, 7X, 7Y, 8Y   (Shortest path on Green route start at 7T point)  
+  6. **Input**: Weight 1900, Box size 1, destination 8Y
+     - **Output**: Ship on Blue LINE, divert: 18V, 17V, ...  (Green truck is fully loaded with 1900 kg, so the second closest route is chosen)
+  7. **Input**: 0 0 x
+     - **Output**: End the program.
+	```
     =================
     Seneca Polytechnic Deliveries:
     =================
