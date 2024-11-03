@@ -113,6 +113,8 @@ fall24-sft221-nff-d/
   - **Input**: 0 0 x                                         
      - **Output**: End the program.
 	 - **Explan**: End code.
+	 
+- **Implement**:	 
 	```
     =================
     Seneca Polytechnic Deliveries:
