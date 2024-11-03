@@ -48,13 +48,13 @@ fall24-sft221-nff-d/
 
 ## **🖨️Sample Output**
 - 25x25 grid map (All trucks start at (1,A)):
-  1. **X**: Building (Prohibited area, trucks cannot pass)
-  2. **B**: Blue truck route
-  3. **G**: Green truck route
-  4. **Y**: Yellow truck route
-  5. **+**: Overlap of all routes (Blue, Green, and Yellow)
-  6. **.**: Overlap of Blue and Green routes
-  7. **Space**: Road
+  - **X**: Building (Prohibited area, trucks cannot pass)
+  - **B**: Blue truck route
+  - **G**: Green truck route
+  - **Y**: Yellow truck route
+  - **+**: Overlap of all routes (Blue, Green, and Yellow)
+  - **..**: Overlap of Blue and Green routes
+  - **Space**: Road
     ```
         ABCDEFGHIJKLMNOPQRSTUVWXY
         -------------------------
