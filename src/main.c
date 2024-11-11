@@ -1,3 +1,8 @@
+//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <ctype.h>

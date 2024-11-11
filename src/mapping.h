@@ -1,3 +1,8 @@
+//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
+
 #pragma once
 #ifndef MAPPING_H
 #define MAPPING_H
@@ -25,8 +30,6 @@ struct Map
 */
 struct Point
 {
-	//char row;
-	//char col;
 	int row;  //change char to integer
 	int col;  //change char to integer
 };
@@ -138,24 +141,12 @@ struct Route getYellowRoute();
 double distance(const struct Point* p1, const struct Point* p2);
 
 /**
-* Calculate the shortest path between two points so that the path does not pass through buildings.
-* @param map - the map showing the location of buildings.
-* @param start - the point to start from
-* @param dest - the point to go to
-* @returns - the shortest path from start to dest. If there is no path, then a Route of zero length is returned.If start
-* and dest are the same point, it also returns a Route of zero length.
-*/
-//struct Route shortestPath(const struct Map* map, const struct Point start, const struct Point dest);
-//struct Route shortestPath(const struct Map* map, const struct Truck truck, struct Point start, const struct Point dest, int* index);
-
-/**
 * Calculate all adjacent squares to a given point so that the squares do not overpal a building and do not include the backpath.
 * @param map - the map showing the location of buildings.
 * @param p1 - the point to calculate possible moves for
 * @param backpath - the previous point we visited on the path we travelled so we will exclude travelling backwards.
 * @returns - a collection of adjacent points we could potentially move to.
 */
-//struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point backpath);
 struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point dest, const struct Point notThis);
 /**
 * Compare two points for equality.
@@ -164,15 +155,6 @@ struct Route getPossibleMoves(const struct Map* map, const struct Point p1, cons
 * @returns - true if p1 is equal to p2
 */
 int eqPt(const struct Point p1, const struct Point p2);
-
-/**
-* Calculates the Euclidian distance from every point in a route to a single point and returns the
-* index of the point in the route which is closest to the point.
-* @param route - the route to use to find the closest point
-* @param pt - the point to to find the member of the route which is closest to this point
-* @returns - the index of the closest point on the route to the point or -1 if the route is empty.
-*/
-//int getClosestPoint(const struct Route* route, const struct Point pt);
 
 
 #endif

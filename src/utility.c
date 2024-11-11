@@ -1,4 +1,8 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>    //malloc, free
 #include <ctype.h>     //toupper
@@ -33,9 +37,8 @@ int getUserInput(struct Shipment* cargo) {
 
     clearInputBuffer();
 
-    cargo->point.row = tempRow - 1;                    // Convert row to zero - based index
-    cargo->point.col = (int)(toupper(tempCol) - 'A');  // Convert column letter to index
-
+   cargo->point = usermapToNum(tempRow, tempCol);
+   
     // Check if the user wants to stop
     if (cargo->weight == 0 && cargo->boxSize == 0 && tolower(tempCol) == 'x') {
         return 0;
@@ -48,10 +51,18 @@ int getUserInput(struct Shipment* cargo) {
     }
     return 1;
 }
+//** Process User Input
+struct Point usermapToNum(int row, char col) {
+    struct Point result = { 0 };
+    result.row = row - 1;                      // Convert row to zero - based index
+    result.col = (int)(toupper(col) - 'A');    // Convert column letter to index
+
+    return result;
+};
 
 //** Validates user input for shipment details.
 int validUserInput(struct Shipment cargo) {
-    if (cargo.point.row < 0 || cargo.point.row > 25 || cargo.point.col < 0 || cargo.point.col > 25) {
+    if (cargo.point.row < 0 || cargo.point.row >= 25 || cargo.point.col < 0 || cargo.point.col >= 25) {
         printf("Invalid destination\n");
         return 1;
     }
@@ -77,7 +88,7 @@ int findTruckForShipment(const struct Map map, struct Truck* trucks, const int n
         double checkVolume = trucks[j].totalVolume + cargo.boxSize;
 
         // Evaluate each point in the truck's route to find the shortest diversion to the shipment
-        if (checkWeight < MAX_WEIGHT && checkVolume < MAX_VOLUME) {
+        if (checkWeight <= MAX_WEIGHT && checkVolume <= MAX_VOLUME) {
             for (int i = 0; i < trucks[j].route.numPoints; i++) {
                 struct Route tempPath = aStarPath(&map, trucks[j].route.points[i], cargo.point, trucks[j].route.routeSymbol);
 
@@ -211,11 +222,13 @@ struct Route aStarPath(const struct Map* map, const struct Point start, const st
 }
 
 //** Updates the truck’s diversion route and load status after adding a shipment.
-void updateTruckDivert(struct Truck* truck, const struct Route final, const struct Shipment cargo) {
-    truck->shortestDivert = final;
-    truck->totalVolume += cargo.boxSize;
-    truck->totalWeight += cargo.weight;
-    truck->loadedPercentage = fmax((truck->totalVolume / MAX_VOLUME) * 100, (truck->totalWeight / MAX_WEIGHT) * 100);
+void updateTruckDivert(struct Truck* truck, const struct Route diversionRoute, const struct Shipment cargo) {
+    if (truck != NULL && diversionRoute.points[diversionRoute.numPoints - 1].col == cargo.point.col && diversionRoute.points[diversionRoute.numPoints - 1].row == cargo.point.row) {
+        truck->shortestDivert = diversionRoute;
+        truck->totalVolume += cargo.boxSize;
+        truck->totalWeight += cargo.weight;
+        truck->loadedPercentage = fmax((truck->totalVolume / MAX_VOLUME) * 100, (truck->totalWeight / MAX_WEIGHT) * 100);
+    }
 }
 
 //** Displays the diversion route for the truck, including any alternative routes.

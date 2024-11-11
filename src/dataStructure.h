@@ -1,3 +1,7 @@
+//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
 #pragma once
 #ifndef DATASTRUCTURE_H
 #define DATASTRUCTURE_H

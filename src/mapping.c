@@ -1,3 +1,8 @@
+//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include "mapping.h"
@@ -219,51 +224,6 @@ double distance(const struct Point* p1, const struct Point* p2)
 
 	return sqrt((double)(deltaRow * deltaRow + deltaCol * deltaCol));
 }
-/*
-struct Route shortestPath(const struct Map* map, const struct Point start, const struct Point dest)
-{
-	struct Route result = { {0,0}, 0, DIVERSION };
-	struct Point last = { -1, -1 };
-	struct Point current = start;
-	struct Route possible = { {0,0},0,0 };
-	int close = 0;
-
-	while (!eqPt(current, dest) && close >= 0)
-	{
-		possible = getPossibleMoves(map, current, last);
-		close = getClosestPoint(&possible, dest);
-		if (close >= 0)
-		{
-			last = current;
-			current = possible.points[close];
-			addPtToRoute(&result, current);
-		}
-	}
-
-	return result;
-}*/
-/*
-struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point backpath)
-{
-	struct Route result = { {0,0}, 0, DIVERSION };
-
-	if (p1.row > 0)
-	{
-		if (map->squares[p1.row - 1][p1.col] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col, backpath);	// square above
-		if (p1.col > 0 && map->squares[p1.row - 1][p1.col - 1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col - 1, backpath);	// top left
-		if (p1.col < (map->numCols - 1) && map->squares[p1.row - 1][p1.col + 1] != 1) addPointToRouteIfNot(&result, p1.row - 1, p1.col + 1, backpath);	// top right
-	}
-	if (p1.col > 0 && map->squares[p1.row][p1.col - 1] != 1)addPointToRouteIfNot(&result, p1.row, p1.col - 1, backpath);	// left
-	if (p1.col < (map->numCols - 1) && map->squares[p1.row][p1.col + 1] != 1)addPointToRouteIfNot(&result, p1.row, p1.col + 1, backpath);	// right
-	if (p1.row < (map->numRows - 1))
-	{
-		if (map->squares[p1.row + 1][p1.col] != 1) addPointToRouteIfNot(&result, p1.row + 1, p1.col, backpath);	// square below
-		if (p1.col > 0 && map->squares[p1.row + 1][p1.col - 1] != 1) addPointToRouteIfNot(&result, p1.row + 1, p1.col - 1, backpath);	// bot left
-		if (p1.col < (map->numCols - 1) && map->squares[p1.row + 1][p1.col + 1] != 1) addPointToRouteIfNot(&result, p1.row + 1, p1.col + 1, backpath);	// top right
-	}
-
-	return result;
-}*/
 
 struct Route getPossibleMoves(const struct Map* map, const struct Point p1, const struct Point dest, const struct Point notThis) {
 	struct Route result = { {0}, 0, DIVERSION };
@@ -291,21 +251,3 @@ int eqPt(const struct Point p1, const struct Point p2)
 {
 	return p1.row == p2.row && p1.col == p2.col;
 }
-/*
-int getClosestPoint(const struct Route* route, const struct Point pt)
-{
-	int i, closestIdx = -1;
-	double closestDist = 999999.99, dist;
-
-	for (i = 0; i < route->numPoints; i++)
-	{
-		dist = distance(&pt, &route->points[i]);
-		if (dist < closestDist)
-		{
-			closestDist = dist;
-			closestIdx = i;
-		}
-	}
-	return closestIdx;
-}
-*/

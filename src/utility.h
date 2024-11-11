@@ -1,3 +1,7 @@
+//****************************************************************************
+//Author: Guan-Wei Huang (gwhuang24@gmail.com)
+//Copyright (c) 2024 Guan-Wei Huang
+//*****************************************************************************
 #pragma once
 #ifndef UTILITY_H
 #define UTILITY_H
@@ -23,6 +27,15 @@ struct Map addMultipleRoutes(struct Map* map, struct Route* routes, int numRoute
 * @returns 1 if valid input is received, 0 to stop, or -1 for invalid input
 */
 int getUserInput(struct Shipment* cargo);
+
+/**
+ * Converts user-provided row and column input to a zero-based index format for map coordinates.
+ * @param row - The row number provided by the user (1-based index).
+ * @param col - The column letter provided by the user (A-Z or a-z).
+ * @returns A Point struct with zero-based row and column indices.
+ *          The row is calculated as (row - 1), and the column is calculated as (toupper(col) - 'A').
+ */
+struct Point usermapToNum(int row, char col);
 
 /**
 * Validates user input for shipment details.
@@ -54,10 +67,10 @@ struct Route aStarPath(const struct Map* map, const struct Point start, const st
 /**
 * Updates the truck¡¦s diversion route and load status after adding a shipment.
 * @param truck - pointer to the Truck struct to update
-* @param final - Route struct representing the diversion path
+* @param diversionRoute - Route struct representing the diversion path
 * @param cargo - Shipment struct containing the new shipment details
 */
-void updateTruckDivert(struct Truck* truck, const struct Route final, const struct Shipment cargo);
+void updateTruckDivert(struct Truck* truck, const struct Route diversionRoute, const struct Shipment cargo);
 
 /**
 * Displays the diversion route for the truck, including any alternative routes.
