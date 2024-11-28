@@ -32,17 +32,30 @@ int getUserInput(struct Shipment* cargo) {
     printf("Enter shipment weight, box size and destination (0 0 x to stop): ");
     int tempRow;
     char tempCol;
-    scanf("%lf %lf %d", &cargo->weight, &cargo->boxSize, &tempRow);
-    scanf(" %c", &tempCol);
+    int result1 = scanf("%lf %lf %d", &cargo->weight, &cargo->boxSize, &tempRow);
+    int result2 = scanf(" %c", &tempCol);
 
-    clearInputBuffer();
+    cargo->point = usermapToNum(tempRow, tempCol);
 
-   cargo->point = usermapToNum(tempRow, tempCol);
+    if (!(tempRow >= 0)) {  // Ensure quit only if row is not number(0-24)
    
-    // Check if the user wants to stop
-    if (cargo->weight == 0 && cargo->boxSize == 0 && tolower(tempCol) == 'x') {
-        return 0;
+        // Check if the user wants to stop -> quit
+        if (cargo->weight == 0 && cargo->boxSize == 0 && tolower(tempCol) == 'x') {
+            return 0;
+        }
     }
+
+    if (result1 != 3) {
+        clearInputBuffer();
+        printf("Invalid input format.\n");
+        return -1;
+    }
+    if (result2 != 1) {
+        clearInputBuffer();
+        printf("Invalid input format.\n");
+        return -1;
+    }
+    clearInputBuffer();
 
     // Validate input; return -1 if invalid
     int invalidType = validUserInput(*cargo);
