@@ -1,8 +1,10 @@
 # **A-Star-Pathfinding-System**
 
 ## **Project Overview**
-This project simulates a delivery truck routing system for a local delivery company operating in a 25x25 grid city. The company uses three trucks, each assigned to specific routes (blue, yellow, and green) to efficiently deliver packages to designated buildings.  
-The system provides truck routing, route selection, cargo tracking, and dynamic pathfinding using the A* algorithm for shortest path calculations.
+The A-Star Pathfinding Delivery System is a robust C-based application simulating a delivery network in a structured 25x25 urban grid. Designed for a local logistics company, it employs advanced pathfinding algorithms and optimized load management to ensure efficient and reliable package delivery.
+
+Three trucks, designated as Blue, Green, and Yellow, are tasked with navigating predefined routes, dynamically adapting to real-time shipment data. With a focus on precision, scalability, and performance, this system is ideal for optimizing logistics operations in dense urban areas.
+
 
 ---
 
@@ -153,11 +155,19 @@ fall24-sft221-nff-d/
 
 ---
 
-## **Key Technical Concepts**
-- **A star Algorithm**: Calculates the shortest path by minimizing cost f = g + h, where g is the movement cost from the start point and h is the heuristic estimate to the destination.
-- **Euclidean Distance Calculation**: Used to optimize pathfinding accuracy in real-world applications.
-- **Struct-based Management**: Organizes complex data structures for trucks, shipments, and map routes, making it easier to handle multiple entities and routes.
-
+## **Technical Highlights**
+1. A Pathfinding Algorithm*:
+   - Combines cost f = g + h, where:
+     - g: Movement cost from the start node
+	 - h: Heuristic (Euclidean distance to the destination)
+   - Efficiently finds shortest paths while navigating grid constraints.  
+2. Truck Diversion Handling:
+   - Dynamically adjusts truck routes to account for obstacles and overlapping routes.
+3. Real-Time Load Balancing:
+   - Monitors truck capacity and assigns shipments based on available weight and volume.
+4. Struct-Based Architecture:
+   - Modular design with clearly defined structs for trucks, routes, shipments, and maps, enabling extensibility and maintainability.  
+   
 ---
 ## **Future Enhancements**
 - **Enhanced Route Mapping:** Allow dynamic addition of new routes based on changing map conditions.
